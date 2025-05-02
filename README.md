@@ -37,8 +37,8 @@ The core services run as Docker containers on a Raspberry Pi 5, defined in the `
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository_url>
-    cd <repository_directory>
+    git clone https://github.com/waitesgithub/owasp-devsecops.git
+    cd owasp-devsecops
     ```
 
 2.  **Start the Docker Compose environment on your Raspberry Pi 5:**
@@ -48,12 +48,12 @@ The core services run as Docker containers on a Raspberry Pi 5, defined in the `
     This will download and start all the defined services in the background.
 
 3.  **Access the services:**
-    * **SonarQube:** `http://<your_pi_ip>:9000` (initial credentials: `admin`/`admin`)
-    * **Grafana:** `http://<your_pi_ip>:3000` (initial credentials: `admin`/`your_grafana_password` - set in `docker-compose.yml`)
-    * **Threat Dragon:** `http://<your_pi_ip>:8081`
-    * **DefectDojo:** `http://<your_pi_ip>` (initial credentials: `admin`/`your_defectdojo_password` - set in `docker-compose.yml`)
-    * **Prometheus:** `http://<your_pi_ip>:9090`
-    * **cAdvisor:** `http://<your_pi_ip>:8081`
+    * **SonarQube:** `http://localhost:9000` (initial credentials: `admin`/`admin`)
+    * **Grafana:** `http://localhost:3000` (initial credentials: `admin`/`your_grafana_password` - set in `docker-compose.yml`)
+    * **Threat Dragon:** `http://localhost:8082`
+    * **DefectDojo:** `http://localhost:8080` (initial credentials: `admin`/`your_defectdojo_password` - set in `docker-compose.yml`)
+    * **Prometheus:** `http://localhost:9090`
+    * **cAdvisor:** `http://localhost:8081`
 
 ## GitHub Actions Workflow
 
