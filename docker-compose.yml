@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+  sonarqube:
+    container_name: sonarqube 
+    image: sonarqube:lts-community
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    environment:
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+      - SONAR_JDBC_URL=jdbc:postgresql://sonarqube_db:5432/sonar
+      - SONAR_HOST_URL=http://sonarqube:9000
+    depends_on:
+      - sonarqube_db
+    networks:
+      - devops_net
+
+  sonarqube_db:
+    container_name: sonarqube_db
+    image: postgres:16.4-alpine
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - sonarqube_db_data:/var/lib/postgresql/data
+    networks:
+      - devops_net
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor-arm64:v0.52.0
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    networks:
+      - devops_net
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v3.3.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - cadvisor
+    networks:
+      - devops_net
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.6.1
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana_datasources.yml:/etc/grafana/provisioning/datasources/default.yaml:ro
+      - ./grafana_dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana_dashboard_providers.yml:/etc/grafana/provisioning/dashboards/providers/default.yaml:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - devops_net
+
+  defectdojo:
+    container_name: defectdojo
+    image: defectdojo/defectdojo-django:2.45.3
+    ports:
+      - "8080:8080"
+    volumes:
+      - defectdojo_db:/usr/src/defectdojo/db
+      - defectdojo_media:/usr/src/defectdojo/media
+    environment:
+      - DATABASE_ENGINE=django.db.backends.postgresql
+      - DATABASE_NAME=dojo
+      - DATABASE_USER=dojo
+      - DATABASE_PASSWORD=dojo
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=defectdojo
+      - DJANGO_ALLOWED_HOSTS=*
+    depends_on:
+      - defectdojo_db
+    networks:
+      - devops_net
+
+  defectdojo_db:
+    container_name: defectdojo_db
+    image: postgres:16.4-alpine
+    volumes:
+      - defectdojo_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=dojo
+      - POSTGRES_PASSWORD=dojo
+      - POSTGRES_DB=dojo
+    networks:
+      - devops_net
+
+  threatdragon:
+    container_name: threatdragon
+    image: threatdragon/owasp-threat-dragon:v2.4.1-arm64
+    ports:
+      - "8082:8080"
+    networks:
+      - devops_net
+
+  semgrep:
+    container_name: semgrep
+    image: semgrep/semgrep:latest
+    volumes:
+      - ./code:/code:ro
+      - ./semgrep_rules:/rules:ro
+      - ./semgrep_results:/results
+    environment:
+      - SEMGREP_RULES=pysa
+      - SEMGREP_CONFIG=/rules
+      - SEMGREP_OUTPUT=/results/semgrep.json
+      - SEMGREP_FORMAT=json
+    networks:
+      - devops_net
+
+  trivy:
+    container_name: trivy
+    image: aquasec/trivy:0.62.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./trivy_cache:/root/.cache/
+      - ./code:/code:ro
+      - ./trivy_report:/report
+    command: image --format json --output /report/trivy_image.json your_image:latest
+    networks:
+      - devops_net
+
+  checkov:
+    container_name: checkov
+    image: bridgecrew/checkov:3.2.414
+    volumes:
+      - ./infra:/root/infra:ro
+      - ./checkov_report:/report
+    environment:
+      - CKV_OUTPUT_FORMAT=json
+      - CKV_OUTPUT_PATH=/report/checkov_report.json
+      - DIRECTORY=/root/infra
+    networks:
+      - devops_net
+
+networks:
+  devops_net:
+    driver: bridge
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  sonarqube_db_data:
+  prometheus_data:
+  grafana_data:
+  defectdojo_db:
+  defectdojo_media:
+  defectdojo_postgres_data:
+  trivy_cache:
+  semgrep_results:
+  dependencycheck_data:
+  dependencycheck_report:
+  trivy_report:
+  checkov_report:
+  zap_data:
+  zap_reports:
