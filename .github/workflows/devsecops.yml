@@ -8,7 +8,7 @@ on:
 
 jobs:
   security_checks:
-    runs-on: [ self-hosted, ARM64, Linux ]
+    runs-on:  [self-hosted, linux, ARM64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
