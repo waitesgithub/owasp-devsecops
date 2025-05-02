@@ -1,40 +1,38 @@
 {
   "panels": [
     {
-      "datasource": "<span class="math-inline">\{DS\_PROMETHEUS\}",
-"fieldConfig"\: \{
-"defaults"\: \{
-"unit"\: "short"
-\},
-"overrides"\: \[\]
-\},
-"gridPos"\: \{
-"h"\: 3,
-"w"\: 6,
-"x"\: 0,
-"y"\: 0
-\},
-"id"\: 42,
-<0\>"options"\: \{
-"colorMode"\: "value",
-"graphMode"\: "none",
-"justifyMode"\: "auto",
-"orientation"\: "auto",
-"reduceOptions"\: \{
-"calcs"\: \[
-"lastNotNull"
-\],
-"fields"\: "",
-"values"\: false
-\},
-"textMode"\: "auto"
-\},
-"pluginVersion"\:</0\> "11\.6\.1",
-"targets"\: \[
-\{
-"datasource"\: \{
-"type"\: "prometheus",
-"uid"\: "</span>{DS_PROMETHEUS}"
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 42,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "up{job=\"sonarqube-health\"}",
@@ -47,88 +45,86 @@
       "type": "stat"
     },
     {
-      "datasource": "<span class="math-inline">\{DS\_PROMETHEUS\}",
-"description"\: "\- Lines \(lines\)\: The number of physical lines \\n\- Lines of code \(ncloc\)\: The number of physical lines that contain at least one character\\n\- Comment lines \(comment\_lines\)\: The number of lines containing comment",
-"fieldConfig"\: \{
-"defaults"\: \{
-"mappings"\: \[\],
-"thresholds"\: \{
-"mode"\: "absolute",
-"steps"\: \[
-\{
-"color"\: "green",
-"value"\: null
-\}
-\]
-\},
-"unit"\: "short"
-\},
-"overrides"\: \[\]
-\},
-"gridPos"\: \{
-"h"\: 5,
-"w"\: 15,
-"x"\: 0,
-"y"\: 3
-\},
-"id"\: 62,
-<1\>"options"\: \{
-"colorMode"\: "background",
-<0\>"graphMode"\: "none",
-"justifyMode"\: "auto",
-"orientation"\: "auto",
-"reduceOptions"\: \{
-"calcs"\: \[
-"lastNotNull"
-\],
-"fields"\: "",
-"values"\: false
-\},
-"textMode"\:</1\> "auto"
-\},
-"pluginVersion"\:</0\> "11\.6\.1",
-"targets"\: \[
-\{
-"datasource"\: \{
-"type"\: "prometheus",
-"uid"\: "</span>{DS_PROMETHEUS}"
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Lines (lines): The number of physical lines\nLines of code (ncloc): The number of physical lines that contain at least one character\nComment lines (comment_lines): The number of lines containing comments",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 15,
+        "x": 0,
+        "y": 3
+      },
+      "id": 62,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "comment_lines{domain=\"Size\",project_key=\"<span class="math-inline">project\_key\\"\}",
-"legendFormat"\: "Comment Lines",
-"range"\: true,
-"refId"\: "A"
-\},
-\{
-"datasource"\: \{
-"type"\: "prometheus",
-"uid"\: "</span>{DS_PROMETHEUS}"
+          "expr": "comment_lines{domain=\"Size\",project_key=\"project_key\"}",
+          "legendFormat": "Comment Lines",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "lines{domain=\"Size\",project_key=\"<span class="math-inline">project\_key\\"\}",
-"hide"\: false,
-"legendFormat"\: "Total Lines",
-"range"\: true,
-"refId"\: "B"
-\},
-\{
-"datasource"\: \{
-"type"\: "prometheus",
-"uid"\: "</span>{DS_PROMETHEUS}"
+          "expr": "lines{domain=\"Size\",project_key=\"project_key\"}",
+          "hide": false,
+          "legendFormat": "Total Lines",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "ncloc{domain=\"Size\",project_key=\"<span class="math-inline">project\_key\\"\}",
-"hide"\: false,
-"legendFormat"\: "Lines of Code",
-"range"\: true,
-"refId"\: "C"
-\}
-\],
-"title"\: "Line of Code",
-"type"\: "stat"
-\},
-\{
-"datasource"\: "</span>{DS_PROMETHEUS}",
+          "expr": "ncloc{domain=\"Size\",project_key=\"project_key\"}",
+          "hide": false,
+          "legendFormat": "Lines of Code",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Line of Code",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The comment lines density = comment lines / (lines of code + comment lines) * 100",
       "fieldConfig": {
         "defaults": {
@@ -164,9 +160,7 @@
       "options": {
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -181,17 +175,17 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "comment_lines_density{domain=\"Size\",project_key=\"<span class="math-inline">project\_key\\"\}",
-"legendFormat"\: "Comment Lines Density",
-"range"\: true,
-"refId"\: "A"
-\}
-\],
-"title"\: "The comment lines density",
-"type"\: "gauge"
-\},
-\{
-"datasource"\: "</span>{DS_PROMETHEUS}",
+          "expr": "comment_lines_density{domain=\"Size\",project_key=\"project_key\"}",
+          "legendFormat": "Comment Lines Density",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Comment Lines Density",
+      "type": "gauge"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The total count of issues in all states.",
       "fieldConfig": {
         "defaults": {
@@ -221,9 +215,7 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -237,41 +229,14 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "violations{domain=\"Issues\",project_key=\"<span class="math-inline">project\_key\\"\}",
-"legendFormat"\: "Total of Issues",
-"range"\: true,
-"refId"\: "A"
-\}
-\],
-"title"\: "Total of Issues",
-"type"\: "stat"
-\},
-\{
-"datasource"\: "</span>{DS_PROMETHEUS}",
-      "description": "The total count of issues of the specified severity, where xxx is one of: blocker, critical, major, minor, info.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 10,
-        "x": 5,
-        "y": 8
-      },
-      "id": 30,
-      "options": {
-        "displayLabels": [
-          "percent"
-        ],
-        "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": []
-        },
+          "expr": "violations{domain=\"Issues\",project_key=\"project_key\"}",
+          "legendFormat": "Total Issues",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Issues",
+      "type": "stat"
+    }
+  ]
+}
