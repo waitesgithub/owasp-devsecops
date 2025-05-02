@@ -1,4 +1,4 @@
-# DevSecOps on Raspberry Pi 5 with GitHub Actions
+# DevSecOps on Raspberry Pi 5 with GitHub Actions using OWASP Project Tools
 
 This project demonstrates a DevSecOps pipeline running primarily on a Raspberry Pi 5, orchestrated by GitHub Actions. It incorporates various open-source tools for static and dynamic application security testing (SAST/DAST), software composition analysis (SCA), infrastructure-as-code (IaC) security scanning, and vulnerability management.
 
