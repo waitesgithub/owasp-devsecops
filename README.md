@@ -147,6 +147,9 @@ owasp-devsecops/
 - [ ] grafana_dashboard_providers.yml: Create this file to tell Grafana where to find your dashboard files.
 - [ ] semgrep_rules/: Place your custom Semgrep rule files (typically .yaml) in this directory.
 
+## Grafana Dashboards for Monitoring Used
+- [ ] https://grafana.com/grafana/dashboards/17642-sonarqube-scan-dashboard/
+- [ ] 
 
 ## Contributing
 
