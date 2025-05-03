@@ -79,15 +79,16 @@ jobs:
         run: |
           # Example using curl (adjust based on your report formats and DefectDojo API)
           curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F "file=@semgrep_results/semgrep.json" -F "scan_type=Semgrep" \
+            -F "file=@${{ github.workspace }}/semgrep_results/semgrep.json" -F "scan_type=Semgrep" \
             "http://your_defectdojo_ip/api/v2/import_scan/"
           curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F "file=@dependencycheck_report/dependency-check-report.xml" -F "scan_type=OWASP Dependency Check" \
+            -F "file=@${{ github.workspace }}/dependencycheck_report/dependency-check-report.xml" -F "scan_type=OWASP Dependency Check" \
             "http://your_defectdojo_ip/api/v2/import_scan/"
           curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F "file=@trivy_report/trivy_results.json" -F "scan_type=Trivy" \
+            -F "file=@${{ github.workspace }}/trivy_report/trivy_results.json" -F "scan_type=Trivy" \
             "http://your_defectdojo_ip/api/v2/import_scan/"
           curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F "file=@checkov_report/checkov_report.json" -F "scan_type=Checkov" \
+            -F "file=@${{ github.workspace }}/checkov_report/checkov_report.json" -F "scan_type=Checkov" \
             "http://your_defectdojo_ip/api/v2/import_scan/"
           echo "Security findings uploaded to DefectDojo"
+        shell: /usr/bin/bash -e {0}
