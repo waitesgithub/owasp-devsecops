@@ -20,10 +20,10 @@ jobs:
             -v ${{ github.workspace }}/semgrep_rules:/rules:ro \
             -v ${{ github.workspace }}/semgrep_results:/results \
             semgrep/semgrep:latest \
-            scan \
+            semgrep \
             --config /rules \
             --json \
-             --output /results/semgrep.json /code
+            --output /results/semgrep.json /code
           echo "Semgrep Scan Completed. Results in semgrep_results/semgrep.json"
 
       - name: Run Dependency Check
