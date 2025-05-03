@@ -8,22 +8,34 @@ on:
 
 jobs:
   security_checks:
-    runs-on:  [self-hosted, linux, ARM64]
+    runs-on:  [ self-hosted, ARM64, Linux ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Docker
-        uses: docker/setup-docker-action@v4
+        uses: docker/setup-docker@v2
 
       - name: Run Semgrep Scan
         run: |
-          docker run --rm -v ${{ github.workspace }}:/code:ro -v $PWD/semgrep_rules:/rules:ro -v $PWD/semgrep_results:/results semgrep/semgrep:latest --config /rules --format json --output /results/semgrep.json /code
+          docker run --rm \
+            -v ${{ github.workspace }}:/code:ro \
+            -v $PWD/semgrep_rules:/rules:ro \
+            -v $PWD/semgrep_results:/results \
+            semgrep/semgrep:latest \
+            --config /rules \
+            --format json \
+            --output /results/semgrep.json
           echo "Semgrep Scan Completed. Results in semgrep_results/semgrep.json"
 
       - name: Run Dependency Check
         run: |
-          docker run --rm -v ${{ github.workspace }}:/code:ro -v $PWD/dependencycheck_data:/home/dependency-check/.m2 -v $PWD/dependencycheck_report:/report owasp/dependency-check:latest -s /code -o /report -f ALL
+          docker run --rm \
+            -v ${{ github.workspace }}:/code:ro \
+            -v $PWD/dependencycheck_data:/home/dependency-check/.m2 \
+            -v $PWD/dependencycheck_report:/report \
+            owasp/dependency-check:latest \
+            -s /code -f XML -o /report/dependency-check-report.xml
           echo "Dependency Check Completed. Report in dependencycheck_report/"
 
       - name: Build and Scan Docker Image (if Dockerfile exists)
@@ -31,19 +43,29 @@ jobs:
         run: |
           IMAGE_NAME=your_registry/your_image:${{ github.sha }} # Replace with your image details
           docker build -t $IMAGE_NAME .
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/trivy_report:/report aquasec/trivy:0.62.0 image --format json --output /report/trivy_results.json $IMAGE_NAME
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $PWD/trivy_report:/report \
+            aquasec/trivy:0.62.0 \
+            image --format json --output /report/trivy_results.json $IMAGE_NAME
           echo "Trivy Scan Completed. Report in trivy_report/trivy_results.json"
-
+          
       - name: Run Checkov Scan (if infrastructure code exists in ./infra)
         if: ${{ github.workspace }}/infra
         run: |
-          docker run --rm -v ${{ github.workspace }}/infra:/root/infra:ro -v $PWD/checkov_report:/report bridgecrew/checkov:latest -o json -o /report/checkov_report.json -d /root/infra
+          docker run --rm \
+            -v ${{ github.workspace }}/infra:/root/infra:ro \
+            -v $PWD/checkov_report:/report \ 
+            bridgecrew/checkov:latest \ 
+            -o json \ 
+            -o /report/checkov_report.json \ 
+            -d /root/infra
           echo "Checkov Scan Completed. Report in checkov_report/checkov_report.json"
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_HOST_URL: "http://your_sonarqube_ip:9000" # Replace with your SonarQube URL
+          SONAR_HOST_URL: "http://localhost:9000" # Replace with your SonarQube URL
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
         with:
           args: >-
@@ -58,8 +80,16 @@ jobs:
         if: always()
         run: |
           # Example using curl (adjust based on your report formats and DefectDojo API)
-          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" -F "file=@semgrep_results/semgrep.json" -F "scan_type=Semgrep" "http://your_defectdojo_ip/api/v2/import_scan/"
-          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" -F "file=@dependencycheck_report/dependency-check-report.xml" -F "scan_type=OWASP Dependency Check" "http://your_defectdojo_ip/api/v2/import_scan/"
-          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" -F "file=@trivy_report/trivy_results.json" -F "scan_type=Trivy" "http://your_defectdojo_ip/api/v2/import_scan/"
-          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" -F "file=@checkov_report/checkov_report.json" -F "scan_type=Checkov" "http://your_defectdojo_ip/api/v2/import_scan/"
+          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F "file=@semgrep_results/semgrep.json" -F "scan_type=Semgrep" \
+            "http://your_defectdojo_ip/api/v2/import_scan/"
+          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F "file=@dependencycheck_report/dependency-check-report.xml" -F "scan_type=OWASP Dependency Check" \
+            "http://your_defectdojo_ip/api/v2/import_scan/"
+          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F "file=@trivy_report/trivy_results.json" -F "scan_type=Trivy" \
+            "http://your_defectdojo_ip/api/v2/import_scan/"
+          curl -X POST -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F "file=@checkov_report/checkov_report.json" -F "scan_type=Checkov" \
+            "http://your_defectdojo_ip/api/v2/import_scan/"
           echo "Security findings uploaded to DefectDojo"
